@@ -104,7 +104,7 @@ Open `frontend/index.html` in your browser.
 4. The system returns:
    - Scam Score
    - Verdict
-   - Reasons behind the decision.
+   - Reasons behind the decision
 5. Results are displayed in a simple and user-friendly interface.
 
 ---
@@ -122,12 +122,6 @@ Open `frontend/index.html` in your browser.
 
 ## Author
 
-Hamsa Telikicherla
+**Hamsa Telikicherla**
 
 Built for the Creative Showcase Hackathon.
-
----
-
-## License
-
-This project is licensed under the MIT License.# ScamSense AI
