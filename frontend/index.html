@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ScamSense AI</title>
+    <link rel="stylesheet" href="index.css">
+    <link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+/>
+</head>
+<body>
+
+    <nav>
+        <h2>
+             <i class="fa-solid fa-shield-halved"></i>
+            ScamSense AI</h2>
+    </nav>
+
+    <section class="hero">
+        <h1>Verify Before You Trust.</h1>
+
+        <p>
+            Paste an SMS or email and let AI analyze whether it's
+            safe or suspicious.
+        </p>
+    </section>
+
+    <section class="input-section">
+
+        <textarea
+            id="message-input"
+            placeholder="Paste your SMS or email here..."
+        ></textarea>
+
+        <p id="error-message"></p>
+
+        <button id="analyze-btn">
+            Analyze Message
+        </button>
+
+    </section>
+
+    <section id="result-card" hidden>
+
+        <h2>Analysis Result</h2>
+
+        <div class="result-box">
+
+            <div class="result-item">
+                <h3>Scam Score</h3>
+                <p id="score">---</p>
+            </div>
+
+            <div class="result-item">
+                <h3>Verdict</h3>
+                <p id="verdict">---</p>
+            </div>
+
+            <div class="result-item">
+                <h3>Why is this suspicious?</h3>
+
+                <ul id="reasons-list">
+                    
+                </ul>
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        <p>ScamSense AI © 2026</p>
+    </footer>
+
+    <script src="index.js"></script>
+
+</body>
+</html>
+
