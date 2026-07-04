@@ -6,13 +6,6 @@ ScamSense AI is an AI-powered web application that helps users identify suspicio
 
 ---
 
-## Live Demo
-
-- Frontend: https://your-frontend-link
-- Backend API: https://your-backend-link
-
----
-
 ## Features
 
 - AI-powered scam detection using Gemini API
