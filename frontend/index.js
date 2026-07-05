@@ -21,41 +21,47 @@ analyzeBtn.addEventListener("click", async function () {
     analyzeBtn.innerText = "Analyzing...";
     analyzeBtn.disabled = true;
 
-    try {
-        const response = await fetch(
-            "http://localhost:5000/analyze",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    message: message
-                })
-            }
-        );
-
-        let data = await response.text();
-
-        data = data
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim();
-
-        data = JSON.parse(data);
-
-        resultCard.hidden = false;
-
-        score.innerText = `${data.score}/100`;
-        verdict.innerText = data.verdict;
-
-        let html = "";
-
-        for (let reason of data.reasons) {
-            html += `<li>${reason}</li>`;
+ try {
+    const response = await fetch(
+        "http://localhost:5000/analyze",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message
+            })
         }
+    );
 
-        reasonsList.innerHTML = html;
+    const data = await response.json();
+
+    if (!response.ok) {
+        errorMessage.innerText = data.error || "Something went wrong.";
+        return;
+    }
+
+    if (
+        typeof data.score !== "number" ||
+        !Array.isArray(data.reasons)
+    ) {
+        errorMessage.innerText = "Invalid response received from AI.";
+        return;
+    }
+
+    resultCard.hidden = false;
+
+    score.innerText = `${data.score}/100`;
+    verdict.innerText = data.verdict;
+
+    let html = "";
+
+    for (const reason of data.reasons) {
+        html += `<li>${reason}</li>`;
+    }
+
+    reasonsList.innerHTML = html;
 
         if (data.score >= 70) {
             score.style.color = "#ef4444";
@@ -66,7 +72,7 @@ analyzeBtn.addEventListener("click", async function () {
         else {
             score.style.color = "#22c55e";
         }
-        
+
         if (data.verdict === "Likely Scam") {
             verdict.style.color = "#ef4444";
         }
