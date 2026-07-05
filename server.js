@@ -11,21 +11,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend files
 app.use(express.static(path.join(__dirname, "frontend")));
+
+if (!process.env.GEMINI_API_KEY) {
+    console.error("GEMINI_API_KEY is missing.");
+    process.exit(1);
+}
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Home page
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
-// Analyze endpoint
 app.post("/analyze", async (req, res) => {
+
     try {
 
         const { message } = req.body;
+
+        if (!message || message.trim() === "") {
+            return res.status(400).json({
+                error: "Message cannot be empty."
+            });
+        }
 
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
@@ -38,7 +47,7 @@ Analyze the following SMS, email or website URL.
 
 "${message}"
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON.
 
 {
   "score": 0,
@@ -47,11 +56,9 @@ Return ONLY valid JSON in this format:
 
 Rules:
 
-- Score = probability that it is a scam.
-- Integer from 0 to 100.
-- 0 = completely safe.
-- 100 = definitely scam.
-- Give 3-5 short reasons.
+- Score must be between 0 and 100.
+- Score indicates probability of scam.
+- Give exactly 3-5 short reasons.
 - Return ONLY JSON.
 `;
 
@@ -64,7 +71,13 @@ Rules:
             .replace(/```/g, "")
             .trim();
 
-        const data = JSON.parse(response);
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+
+        if (!jsonMatch) {
+            throw new Error("AI returned invalid JSON.");
+        }
+
+        const data = JSON.parse(jsonMatch[0]);
 
         if (data.score >= 70) {
             data.verdict = "Likely Scam";
@@ -85,14 +98,16 @@ Rules:
 
         if (err.status === 429) {
             return res.status(429).json({
-                error: "Rate limit reached. Please try again later."
+                error: "Gemini API free quota exceeded. Please try again later or use another API key."
             });
         }
 
         res.status(500).json({
-            error: "Internal server error."
+            error: err.message || "Internal server error."
         });
+
     }
+
 });
 
 const PORT = process.env.PORT || 5000;

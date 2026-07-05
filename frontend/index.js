@@ -38,7 +38,8 @@ analyzeBtn.addEventListener("click", async function () {
     const data = await response.json();
 
     if (!response.ok) {
-        errorMessage.innerText = data.error || "Something went wrong.";
+        errorMessage.innerText = data.error;
+        resultCard.hidden = true;
         return;
     }
 
