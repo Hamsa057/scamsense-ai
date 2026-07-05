@@ -37,13 +37,11 @@ analyzeBtn.addEventListener("click", async function () {
 
     const data = await response.json();
 
-    // Handle backend errors (429, 500, etc.)
     if (!response.ok) {
         errorMessage.innerText = data.error || "Something went wrong.";
         return;
     }
 
-    // Validate AI response
     if (
         typeof data.score !== "number" ||
         !Array.isArray(data.reasons)
@@ -65,7 +63,6 @@ analyzeBtn.addEventListener("click", async function () {
 
     reasonsList.innerHTML = html;
 
-        // Score Color
         if (data.score >= 70) {
             score.style.color = "#ef4444";
         }
@@ -76,7 +73,6 @@ analyzeBtn.addEventListener("click", async function () {
             score.style.color = "#22c55e";
         }
 
-        // Verdict Color
         if (data.verdict === "Likely Scam") {
             verdict.style.color = "#ef4444";
         }
