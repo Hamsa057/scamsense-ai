@@ -23,7 +23,7 @@ analyzeBtn.addEventListener("click", async function () {
 
  try {
     const response = await fetch(
-        "http://localhost:5000/analyze",
+    "/analyze",
         {
             method: "POST",
             headers: {
@@ -65,35 +65,34 @@ analyzeBtn.addEventListener("click", async function () {
 
     reasonsList.innerHTML = html;
 
-    // Score color
-    if (data.score >= 70) {
-        score.style.color = "#ef4444";
-    }
-    else if (data.score >= 30) {
-        score.style.color = "#f59e0b";
-    }
-    else {
-        score.style.color = "#22c55e";
-    }
+        // Score Color
+        if (data.score >= 70) {
+            score.style.color = "#ef4444";
+        }
+        else if (data.score >= 30) {
+            score.style.color = "#f59e0b";
+        }
+        else {
+            score.style.color = "#22c55e";
+        }
 
-    // Verdict color
-    if (data.verdict === "Likely Scam") {
-        verdict.style.color = "#ef4444";
+        // Verdict Color
+        if (data.verdict === "Likely Scam") {
+            verdict.style.color = "#ef4444";
+        }
+        else if (data.verdict === "Suspicious") {
+            verdict.style.color = "#f59e0b";
+        }
+        else {
+            verdict.style.color = "#22c55e";
+        }
     }
-    else if (data.verdict === "Suspicious") {
-        verdict.style.color = "#f59e0b";
+    catch (err) {
+        console.log(err);
+        alert("Something went wrong. Please try again.");
     }
-    else {
-        verdict.style.color = "#22c55e";
+    finally {
+        analyzeBtn.innerText = "Analyze Message";
+        analyzeBtn.disabled = false;
     }
-}
-catch (err) {
-    console.error(err);
-    errorMessage.innerText =
-        "Unable to connect to the server.";
-}
-finally {
-    analyzeBtn.innerText = "Analyze Message";
-    analyzeBtn.disabled = false;
-}
 });
