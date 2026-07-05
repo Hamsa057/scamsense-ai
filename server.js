@@ -64,12 +64,19 @@ Rules:
         res.send(response);
     }
     catch (err) {
-        console.error(err);
 
-        res.status(500).json({
-            error: "Failed to analyze message."
+    console.error(err);
+
+    if (err.status === 429) {
+        return res.status(429).json({
+            error: "Rate limit reached. Please wait a moment and try again."
         });
     }
+
+    res.status(500).json({
+        error: "Internal server error."
+    });
+}
 });
 
 const PORT = process.env.PORT || 5000;
