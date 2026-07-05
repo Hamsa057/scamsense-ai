@@ -23,7 +23,7 @@ analyzeBtn.addEventListener("click", async function () {
 
  try {
     const response = await fetch(
-        "http://localhost:5000/analyze",
+    "/analyze",
         {
             method: "POST",
             headers: {
