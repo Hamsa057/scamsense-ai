@@ -57,7 +57,6 @@ analyzeBtn.addEventListener("click", async function () {
 
         reasonsList.innerHTML = html;
 
-        // Score Color
         if (data.score >= 70) {
             score.style.color = "#ef4444";
         }
@@ -67,8 +66,7 @@ analyzeBtn.addEventListener("click", async function () {
         else {
             score.style.color = "#22c55e";
         }
-
-        // Verdict Color
+        
         if (data.verdict === "Likely Scam") {
             verdict.style.color = "#ef4444";
         }
