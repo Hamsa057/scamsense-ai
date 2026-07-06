@@ -1,6 +1,6 @@
 # ScamSense AI
 
-ScamSense AI is an AI-powered web application that helps users identify phishing attempts, scam messages, fraudulent emails. Users simply paste a message or email, and the application analyzes it using Google's Gemini AI to estimate the likelihood of a scam and explain the reasoning behind the result.
+ScamSense AI is an AI-powered web application that helps users identify phishing attempts, scam messages, fraudulent emails, and suspicious website URLs. Users simply paste an SMS, email, or website URL, and the application analyzes it using Google's Gemini AI to estimate the likelihood of a scam and explain the reasoning behind the result.
 
 ---
 
@@ -9,6 +9,7 @@ ScamSense AI is an AI-powered web application that helps users identify phishing
 - AI-powered scam detection using Google Gemini API
 - Analyze SMS messages
 - Analyze emails
+- Analyze website URLs
 - Scam score (0–100)
 - Verdict generation:
   - Safe
@@ -49,7 +50,7 @@ ScamSense AI is an AI-powered web application that helps users identify phishing
 
 ## Project Structure
 
-```
+```text
 scamsense-ai/
 │
 ├── frontend/
@@ -102,7 +103,7 @@ node server.js
 
 Open your browser and visit:
 
-```
+```text
 http://localhost:5000
 ```
 
@@ -113,13 +114,12 @@ http://localhost:5000
 1. Paste an SMS, email, or website URL.
 2. Click **Analyze**.
 3. The frontend sends the input to the Express backend.
-4. The backend securely communicates with the Google Gemini API.
-5. Gemini analyzes the content.
-6. The application returns:
+4. The backend securely communicates with the Google Gemini API to analyze the content.
+5. The application evaluates the input and generates:
    - Scam Score
    - Verdict
    - Reasons explaining the analysis
-7. Results are displayed in a clean and responsive interface.
+6. Results are displayed in a clean and responsive interface.
 
 ---
 
@@ -127,7 +127,7 @@ http://localhost:5000
 
 ### Input
 
-```
+```text
 URGENT! Your bank account will be blocked today.
 Click here immediately and enter your password and OTP.
 ```
@@ -136,13 +136,13 @@ Click here immediately and enter your password and OTP.
 
 **Scam Score**
 
-```
+```text
 98/100
 ```
 
 **Verdict**
 
-```
+```text
 Likely Scam
 ```
 
@@ -161,10 +161,10 @@ Likely Scam
 - File attachment analysis
 - WhatsApp message analysis
 - Browser extension
-- Real-time URL reputation checking
+- Real-time website reputation checking
 - Multi-language support
 - Scam reporting dashboard
-- User authentication and history
+- User authentication and analysis history
 - Dark/Light mode
 - Downloadable analysis reports
 
@@ -185,13 +185,13 @@ PORT=5000
 
 ### POST `/analyze`
 
-Analyzes a message or email.
+Analyzes an SMS, email, or website URL.
 
 #### Request
 
 ```json
 {
-  "message": "Your text or URL"
+  "message": "Your message, email, or website URL"
 }
 ```
 
@@ -215,7 +215,7 @@ Analyzes a message or email.
 
 - AI responses depend on the Google Gemini API.
 - Free-tier Gemini API usage is subject to daily request quotas.
-- Website URL analysis is based on AI reasoning and does not perform live reputation or malware checks.
+- Website URL analysis identifies suspicious patterns but does not perform live malware scanning or real-time website reputation checks.
 
 ---
 
