@@ -4,92 +4,133 @@ const resultCard = document.getElementById("result-card");
 
 const score = document.getElementById("score");
 const verdict = document.getElementById("verdict");
+const source = document.getElementById("source");
+
 const reasonsList = document.getElementById("reasons-list");
 const errorMessage = document.getElementById("error-message");
 
-analyzeBtn.addEventListener("click", async function () {
+analyzeBtn.addEventListener("click", async () => {
+
     const message = messageInput.value.trim();
 
     if (message === "") {
         errorMessage.innerText =
-            "Please paste an SMS or email first.";
+            "Please enter an SMS, email, or website URL.";
+
+        resultCard.hidden = true;
         return;
     }
 
     errorMessage.innerText = "";
 
-    analyzeBtn.innerText = "Analyzing...";
     analyzeBtn.disabled = true;
+    analyzeBtn.innerText = "Analyzing...";
 
- try {
-    const response = await fetch(
-    "/analyze",
-        {
+    try {
+
+        const response = await fetch("/analyze", {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
                 message: message
             })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            errorMessage.innerText =
+                data.error || "Something went wrong.";
+
+            resultCard.hidden = true;
+            return;
         }
-    );
 
-    const data = await response.json();
+        resultCard.hidden = false;
 
-    if (!response.ok) {
-        errorMessage.innerText = data.error;
-        resultCard.hidden = true;
-        return;
-    }
+        score.innerText = `${data.score}/100`;
+        verdict.innerText = data.verdict;
 
-    if (
-        typeof data.score !== "number" ||
-        !Array.isArray(data.reasons)
-    ) {
-        errorMessage.innerText = "Invalid response received from AI.";
-        return;
-    }
+        source.innerText =
+            data.source || "Google Gemini AI";
 
-    resultCard.hidden = false;
+        reasonsList.innerHTML = "";
 
-    score.innerText = `${data.score}/100`;
-    verdict.innerText = data.verdict;
+        data.reasons.forEach(reason => {
 
-    let html = "";
+            const li = document.createElement("li");
+            li.innerText = reason;
 
-    for (const reason of data.reasons) {
-        html += `<li>${reason}</li>`;
-    }
+            reasonsList.appendChild(li);
 
-    reasonsList.innerHTML = html;
+        });
 
         if (data.score >= 70) {
+
             score.style.color = "#ef4444";
+
         }
         else if (data.score >= 30) {
+
             score.style.color = "#f59e0b";
+
         }
         else {
+
             score.style.color = "#22c55e";
+
         }
 
         if (data.verdict === "Likely Scam") {
+
             verdict.style.color = "#ef4444";
+
         }
         else if (data.verdict === "Suspicious") {
+
             verdict.style.color = "#f59e0b";
+
         }
         else {
+
             verdict.style.color = "#22c55e";
+
         }
+
+        if (data.source === "Google Gemini AI") {
+
+            source.style.color = "#3b82f6";
+
+        }
+        else {
+
+            source.style.color = "#a855f7";
+
+        }
+
     }
     catch (err) {
-        console.log(err);
-        alert("Something went wrong. Please try again.");
+
+        console.error(err);
+
+        resultCard.hidden = true;
+
+        errorMessage.innerText =
+            "Unable to connect to the server.";
+
     }
     finally {
-        analyzeBtn.innerText = "Analyze Message";
+
         analyzeBtn.disabled = false;
+        analyzeBtn.innerText = "Analyze";
+
     }
+
 });
