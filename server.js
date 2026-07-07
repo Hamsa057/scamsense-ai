@@ -14,24 +14,49 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "frontend")));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 const trustedDomains = [
+
     "google.com",
-    "gmail.com",
-    "youtube.com",
     "microsoft.com",
-    "github.com",
-    "openai.com",
     "apple.com",
     "amazon.com",
-    "linkedin.com",
-    "render.com",
-    "wikipedia.org",
-    "stackoverflow.com",
-    "mozilla.org",
-    "cloudflare.com",
-    "npmjs.com"
+    "amazon.in",
+
+    "airtel.in",
+    "jio.com",
+
+    "sbi.co.in",
+    "onlinesbi.sbi",
+
+    "kotak.com",
+    "kotak.bank.in",
+
+    "icicibank.com",
+    "hdfcbank.com",
+
+    "axisbank.com",
+
+    "paytm.com",
+
+    "phonepe.com",
+
+    "flipkart.com"
+
 ];
+
+function isTrustedURL(message) {
+
+    const match = message.match(/https?:\/\/([^\/]+)/i);
+
+    if (!match) return false;
+
+    const domain = match[1].toLowerCase();
+
+    return trustedDomains.some(d =>
+        domain === d || domain.endsWith("." + d)
+    );
+
+}
 
 function ruleBasedAnalyzer(message) {
 
@@ -268,31 +293,93 @@ if (/^https?:\/\//.test(input)) {
 
     }
 
+    if (isTrustedURL(message)) {
+
+        return res.json({
+            score: 10,
+            verdict: "Safe",
+            reasons: [
+                "The URL belongs to a well-known trusted organization.",
+                "No phishing indicators were detected.",
+                "The domain matches an official website."
+            ],
+            source: "Trusted Domain Database"
+        });
+
+    }
+
+
     try {
 
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
         });
 
-        const prompt = `
-You are a cybersecurity expert.
+const prompt = `
+You are a cybersecurity expert specializing in phishing, scam, and fraud detection.
 
-Analyze the following SMS, email or website URL.
+Analyze the following SMS, email, or website URL.
 
+Input:
 "${message}"
 
-Return ONLY valid JSON.
+Scoring Guidelines:
+
+0-20:
+Safe.
+Official messages, promotional offers, or trusted websites with no phishing indicators.
+
+21-40:
+Mostly Safe.
+May contain marketing language or promotional content, but no attempt to steal information.
+
+41-69:
+Suspicious.
+Contains unusual requests, unknown domains, misleading language, or requires verification.
+
+70-100:
+Likely Scam.
+Contains phishing indicators such as:
+- Requests for OTP
+- Requests for passwords
+- Requests for PIN/CVV
+- Threatens account suspension
+- Creates false urgency
+- Fake prizes or lottery
+- Suspicious or misspelled domains
+- Impersonates trusted companies
+- Shortened URLs hiding destinations
+
+IMPORTANT:
+
+DO NOT classify something as a scam simply because:
+- it contains a website link
+- it contains an offer
+- it mentions a bank
+- it is a promotional SMS
+- it asks users to visit an official website
+
+Official domains like:
+- microsoft.com
+- google.com
+- apple.com
+- amazon.in
+- airtel.in
+- jio.com
+- sbi.co.in
+- onlinesbi.sbi
+- kotak.com
+- kotak.bank.in
+should generally be considered SAFE unless there are obvious phishing indicators.
+
+If the message looks like a normal promotional SMS from a known company, give a score below 30.
+
+Return ONLY valid JSON in this format:
 
 {
-    "score": 0,
-    "reasons": []
+  "score": 0,
+  "reasons": []
 }
-
-Rules:
-
-- Score must be between 0 and 100.
-- Give exactly 3 to 5 reasons.
-- Return ONLY JSON.
 `;
 
         const result =
